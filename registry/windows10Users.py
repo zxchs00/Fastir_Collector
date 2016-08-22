@@ -29,3 +29,15 @@ class Windows10UserReg(_Reg):
 
     def json_networks_list(self):
         super(Windows10UserReg,self)._json_networks_list(r'Software\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles')
+
+# I added (zxchs00 , Lee HyunSeung) ----------------------------------------------------
+
+    def csv_last_visited_mru(self):
+        super(Windows10UserReg, self)._csv_last_visited_mru(
+                    r"Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU")
+        
+    def json_last_visited_mru(self):
+        super(Windows10UserReg, self)._json_last_visited_mru(
+                    r"Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU")
+        
+# -------------------------------------------------------------------------------------

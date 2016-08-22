@@ -598,6 +598,40 @@ class _Reg(object):
                 json_writer = get_json_writer(output)
                 write_list_to_json(self.__get_open_save_mru(str_opensave_mru), json_writer)
 
+# I added (zxchs00 , Lee HyunSeung) ----------------------------------------------------
+    def __get_last_visited_mru(self,str_lastvisited_mru):
+        """Extracts LastVisitedMRU list"""
+        self.logger.info("Extracting last visited MRU")
+        hive_list = self._get_list_from_registry_key(registry_obj.HKEY_USERS, str_lastvisited_mru)
+        to_csv_list = [("COMPUTER_NAME", "TYPE", "LAST_WRITE_TIME", "HIVE", "KEY_PATH", "ATTR_NAME", "REG_TYPE",
+                        "ATTR_TYPE", "ATTR_DATA")]
+        for item in hive_list:
+            if item[KEY_VALUE_STR] == 'VALUE':
+                if item[VALUE_NAME] != "MRUListEx":
+                    pidl = shell.StringAsPIDL(item[VALUE_DATA])
+                    path = shell.SHGetPathFromIDList(pidl)
+                    to_csv_list.append((self.computer_name,
+                                        "LastVisitedMRU",
+                                        item[VALUE_LAST_WRITE_TIME],
+                                        "HKEY_USERS",
+                                        item[VALUE_PATH],
+                                        item[VALUE_NAME],
+                                        item[KEY_VALUE_STR],
+                                        registry_obj.get_str_type(item[VALUE_TYPE]), path))
+        return to_csv_list        
+    def _csv_last_visited_mru(self, str_lastvisited_mru):
+
+        with open(self.output_dir + "\\" + self.computer_name + "_LastVisitedMRU" + self.rand_ext, "wb") as output:
+            csv_writer = get_csv_writer(output)
+            write_list_to_csv(self.__get_last_visited_mru(str_lastvisited_mru), csv_writer)
+
+    def _json_last_visited_mru(self,str_lastvisited_mru):
+        if self.destination == 'local':
+            with open(os.path.join(self.output_dir, '%s_lastvisitedMRU.json' % self.computer_name), 'wb') as output:
+                json_writer = get_json_writer(output)
+                write_list_to_json(self.__get_last_visited_mru(str_lastvisited_mru), json_writer)
+# ---------------------------------------------------------------------------------------------
+
     def __get_registry_services(self):
         self.logger.info("Extracting services")
         path = r"System\CurrentControlSet\Services"
